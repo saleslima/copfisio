@@ -1337,6 +1337,123 @@
                 font-size: 21px !important;
             }
         }
+
+        /* Ajuste solicitado: no celular o layout ocupa toda a largura da tela */
+        @media (max-width: 720px) {
+            html,
+            body {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            body {
+                padding: 0 !important;
+            }
+
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 4px 4px 24px !important;
+            }
+
+            header.pm-header-v5,
+            .pm-title-row,
+            .pm-command-row,
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell,
+            .panel,
+            .panel.active,
+            #userPanel,
+            #adminPanel,
+            #myConsultationsPanel,
+            #specialistPanel {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            header.pm-header-v5 {
+                margin-top: 0 !important;
+                margin-bottom: 8px !important;
+            }
+
+            .pm-title-row {
+                grid-template-columns: 56px minmax(0, 1fr) 56px !important;
+                gap: 8px !important;
+                padding: 8px !important;
+            }
+
+            .pm-header-logo {
+                width: 54px !important;
+                height: 54px !important;
+            }
+
+            .pm-command-row {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell {
+                border-radius: 14px !important;
+            }
+
+            .pm-role-grid {
+                width: 100% !important;
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .pm-role-card {
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .container {
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+
+            header.pm-header-v5,
+            .pm-title-row,
+            .pm-command-row,
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell,
+            .panel,
+            .panel.active {
+                border-radius: 0 !important;
+            }
+
+            .pm-title-row,
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell {
+                border-left-width: 0 !important;
+                border-right-width: 0 !important;
+            }
+
+            .pm-title-row {
+                grid-template-columns: 52px minmax(0, 1fr) 52px !important;
+                gap: 6px !important;
+                padding: 8px 6px !important;
+            }
+
+            .pm-header-logo {
+                width: 50px !important;
+                height: 50px !important;
+            }
+
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell {
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+        }
+
     </style>
 
 </head>
