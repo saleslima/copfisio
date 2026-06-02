@@ -1,0 +1,27 @@
+
+{
+  "name": "FISIO",
+  "short_name": "FISI",
+  "description": "Agendamento",
+  "start_url": "https://saleslima.github.io/FISI/index.html",
+  "scope": "https://saleslima.github.io/FISI/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+
+}

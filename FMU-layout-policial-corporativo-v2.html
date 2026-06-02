@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMU</title>
+    <meta name="theme-color" content="#111111">
+    <meta name="description" content="FMU - Agendamento de Fisioterapia">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="FMU">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+
+    <style id="enterprise-ui-overhaul">
+        :root {
+            --corp-bg: #eef2f6;
+            --corp-surface: #ffffff;
+            --corp-surface-2: #f8fafc;
+            --corp-ink: #071526;
+            --corp-muted: #5e718d;
+            --corp-muted-2: #8a98aa;
+            --corp-line: rgba(7, 21, 38, 0.12);
+            --corp-line-strong: rgba(7, 21, 38, 0.20);
+            --corp-navy: #09254a;
+            --corp-blue: #123d73;
+            --corp-blue-2: #1f5f9f;
+            --corp-gold: #b78b2d;
+            --corp-green: #1f9d62;
+            --corp-red: #a52a2a;
+            --corp-shadow: 0 26px 70px rgba(8, 25, 48, 0.14);
+            --corp-shadow-soft: 0 12px 32px rgba(8, 25, 48, 0.10);
+            --corp-radius-xl: 26px;
+            --corp-radius-lg: 20px;
+            --corp-radius-md: 14px;
+            --corp-radius-sm: 10px;
+            --corp-seat: var(--calendar-available-color, var(--available-day-color, #25d366));
+        }
+
+        body.dark-mode,
+        body.dark,
+        [data-theme="dark"] {
+            --corp-bg: #07111f;
+            --corp-surface: #0d1828;
+            --corp-surface-2: #101f34;
+            --corp-ink: #eff6ff;
+            --corp-muted: #aab8ca;
+            --corp-muted-2: #8190a6;
+            --corp-line: rgba(232, 241, 255, 0.13);
+            --corp-line-strong: rgba(232, 241, 255, 0.22);
+            --corp-navy: #8fbfff;
+            --corp-blue: #6aa7f8;
+            --corp-blue-2: #9ec7ff;
+            --corp-gold: #e6c46a;
+            --corp-shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+            --corp-shadow-soft: 0 12px 36px rgba(0, 0, 0, 0.22);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            animation: none !important;
+            transition-property: background-color, border-color, color, box-shadow, opacity !important;
+            transition-duration: 0s !important;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--corp-bg);
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            color: var(--corp-ink) !important;
+            background:
+                linear-gradient(115deg, rgba(9, 37, 74, 0.08), transparent 32rem),
+                radial-gradient(circle at 8% 0%, rgba(183, 139, 45, 0.12), transparent 18rem),
+                linear-gradient(180deg, #f6f8fb 0%, var(--corp-bg) 52%, #e7edf4 100%) !important;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+            letter-spacing: -0.012em;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(7, 21, 38, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(7, 21, 38, 0.035) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 78%);
+        }
+
+        body.dark-mode,
+        body.dark,
+        [data-theme="dark"] body {
+            background:
+                radial-gradient(circle at 8% 0%, rgba(106, 167, 248, 0.14), transparent 22rem),
+                linear-gradient(180deg, #07111f 0%, #0a1424 58%, #07111f 100%) !important;
+        }
+
+        body.dark-mode::before,
+        body.dark::before,
+        [data-theme="dark"] body::before {
+            background-image:
+                linear-gradient(rgba(232, 241, 255, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(232, 241, 255, 0.045) 1px, transparent 1px);
+        }
+
+        .container {
+            width: min(1500px, calc(100% - 32px)) !important;
+            max-width: none !important;
+            margin: 0 auto !important;
+            padding: 18px 0 46px !important;
+        }
+
+        /* HEADER CORPORATIVO PM */
+        header.enterprise-header {
+            position: relative !important;
+            top: auto !important;
+            z-index: 20;
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) minmax(390px, 460px) !important;
+            gap: 16px !important;
+            align-items: stretch !important;
+            padding: 12px !important;
+            margin: 0 0 18px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: var(--corp-radius-xl) !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.94)) !important;
+            box-shadow: var(--corp-shadow-soft) !important;
+            overflow: hidden !important;
+        }
+
+        header.enterprise-header::before {
+            content: "";
+            position: absolute;
+            inset: 0 auto 0 0;
+            width: 7px;
+            background: linear-gradient(180deg, var(--corp-navy), var(--corp-blue), var(--corp-gold));
+        }
+
+        header.enterprise-header::after {
+            content: "PMESP • GESTÃO DE AGENDAMENTOS";
+            position: absolute;
+            right: 24px;
+            bottom: 10px;
+            color: rgba(9, 37, 74, 0.055);
+            font-size: clamp(20px, 3.2vw, 52px);
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        body.dark-mode header.enterprise-header,
+        body.dark header.enterprise-header,
+        [data-theme="dark"] header.enterprise-header {
+            background: linear-gradient(180deg, rgba(13,24,40,0.96), rgba(10,20,36,0.94)) !important;
+        }
+
+        body.dark-mode header.enterprise-header::after,
+        body.dark header.enterprise-header::after,
+        [data-theme="dark"] header.enterprise-header::after {
+            color: rgba(232, 241, 255, 0.045);
+        }
+
+        .enterprise-brand {
+            position: relative;
+            z-index: 2;
+            min-height: 116px !important;
+            display: grid !important;
+            grid-template-columns: 74px minmax(0, 1fr) !important;
+            gap: 16px !important;
+            align-items: center !important;
+            padding: 18px 20px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 22px !important;
+            background:
+                linear-gradient(135deg, rgba(9, 37, 74, 0.07), transparent 42%),
+                linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,255,255,0.48)) !important;
+            overflow: hidden !important;
+        }
+
+        .enterprise-brand::after {
+            content: "";
+            position: absolute;
+            inset: 12px 12px auto auto;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            border: 1px solid rgba(183, 139, 45, 0.18);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        body.dark-mode .enterprise-brand,
+        body.dark .enterprise-brand,
+        [data-theme="dark"] .enterprise-brand {
+            background:
+                linear-gradient(135deg, rgba(106, 167, 248, 0.10), transparent 42%),
+                linear-gradient(180deg, rgba(16,31,52,0.84), rgba(16,31,52,0.42)) !important;
+        }
+
+        header .logo-fiber-orbit {
+            width: 68px !important;
+            height: 68px !important;
+            min-width: 68px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 5px !important;
+            border-radius: 20px !important;
+            border: 1px solid var(--corp-line-strong) !important;
+            background:
+                linear-gradient(180deg, #ffffff, #eef3f8) !important;
+            box-shadow: 0 12px 28px rgba(9, 37, 74, 0.13) !important;
+            overflow: hidden !important;
+            transform: none !important;
+        }
+
+        header .logo-stack,
+        header .logo,
+        .email-sending-logo-wrap .logo-stack,
+        .email-sending-logo-wrap .logo {
+            animation: none !important;
+            transform: none !important;
+        }
+
+        header .logo-stack {
+            width: 100% !important;
+            height: 100% !important;
+            display: block !important;
+        }
+
+        header .logo {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+            border-radius: 15px !important;
+            position: static !important;
+            opacity: 1 !important;
+        }
+
+        header .logo-secondary {
+            display: none !important;
+        }
+
+        .enterprise-title-wrap {
+            min-width: 0 !important;
+        }
+
+        .enterprise-kicker {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            width: auto !important;
+            padding: 7px 10px !important;
+            margin: 0 0 7px !important;
+            border-radius: 999px !important;
+            border: 1px solid rgba(183, 139, 45, 0.35) !important;
+            background: rgba(183, 139, 45, 0.10) !important;
+            color: var(--corp-navy) !important;
+            font-size: 11px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.11em !important;
+            text-transform: uppercase !important;
+        }
+
+        .enterprise-kicker::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--corp-gold) !important;
+            box-shadow: 0 0 0 4px rgba(183, 139, 45, 0.12);
+        }
+
+        header.enterprise-header h1 {
+            margin: 0 !important;
+            color: var(--corp-ink) !important;
+            font-size: clamp(23px, 2.25vw, 34px) !important;
+            line-height: 1.05 !important;
+            font-weight: 900 !important;
+            letter-spacing: -0.045em !important;
+        }
+
+        .enterprise-subtitle {
+            max-width: 850px !important;
+            margin: 8px 0 0 !important;
+            color: var(--corp-muted) !important;
+            font-size: 14px !important;
+            line-height: 1.45 !important;
+        }
+
+        .enterprise-meta {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 7px !important;
+            margin-top: 12px !important;
+        }
+
+        .enterprise-chip {
+            display: inline-flex !important;
+            align-items: center !important;
+            min-height: 28px !important;
+            padding: 6px 10px !important;
+            border-radius: 999px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: rgba(255,255,255,0.72) !important;
+            color: var(--corp-muted) !important;
+            font-size: 12px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.01em !important;
+        }
+
+        .enterprise-controls {
+            position: relative;
+            z-index: 2;
+            display: grid !important;
+            grid-template-rows: auto 1fr !important;
+            gap: 10px !important;
+            align-content: stretch !important;
+            padding: 14px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 22px !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.88), rgba(248,250,252,0.70)) !important;
+            box-shadow: none !important;
+        }
+
+        body.dark-mode .enterprise-controls,
+        body.dark .enterprise-controls,
+        [data-theme="dark"] .enterprise-controls {
+            background: linear-gradient(180deg, rgba(16,31,52,0.88), rgba(13,24,40,0.70)) !important;
+        }
+
+        .enterprise-utilities {
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            gap: 8px !important;
+            margin: 0 !important;
+            min-height: 34px !important;
+        }
+
+        .theme-toggle,
+        .neon-toggle,
+        #exitAdminBtn {
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            border-radius: 13px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: var(--corp-surface) !important;
+            color: var(--corp-navy) !important;
+            box-shadow: 0 8px 20px rgba(9, 37, 74, 0.08) !important;
+        }
+
+        #exitAdminBtn {
+            width: auto !important;
+            min-width: 0 !important;
+            padding: 0 12px !important;
+            font-weight: 900 !important;
+            font-size: 12px !important;
+        }
+
+        .neon-toggle span {
+            color: var(--corp-green) !important;
+        }
+
+        .neon-color-input {
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            border-radius: 13px !important;
+            overflow: hidden !important;
+            border: 1px solid var(--corp-line) !important;
+            background: var(--corp-surface) !important;
+            padding: 3px !important;
+        }
+
+        .role-select-wrap {
+            position: relative !important;
+            display: grid !important;
+            gap: 10px !important;
+            padding: 12px !important;
+            border-radius: 18px !important;
+            border: 1px solid rgba(183, 139, 45, 0.26) !important;
+            background:
+                linear-gradient(135deg, rgba(183, 139, 45, 0.08), transparent 52%),
+                rgba(255,255,255,0.58) !important;
+            overflow: hidden !important;
+        }
+
+        .enterprise-role-heading {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+        }
+
+        .enterprise-role-heading label {
+            color: var(--corp-muted) !important;
+            font-size: 11px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.08em !important;
+            text-transform: uppercase !important;
+            margin: 0 0 3px !important;
+        }
+
+        .enterprise-role-title {
+            color: var(--corp-ink) !important;
+            font-size: 14px !important;
+            font-weight: 900 !important;
+            line-height: 1.25 !important;
+        }
+
+        .enterprise-role-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 26px !important;
+            padding: 5px 9px !important;
+            border-radius: 999px !important;
+            border: 1px solid rgba(183,139,45,0.35) !important;
+            background: rgba(183,139,45,0.12) !important;
+            color: #8a671c !important;
+            font-size: 10px !important;
+            font-weight: 900 !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+        }
+
+        .role-select {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            overflow: hidden !important;
+        }
+
+        .enterprise-role-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 8px !important;
+        }
+
+        .enterprise-role-card {
+            min-height: 58px !important;
+            display: grid !important;
+            grid-template-columns: 36px minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 9px !important;
+            padding: 10px !important;
+            margin: 0 !important;
+            border-radius: 15px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: rgba(255,255,255,0.82) !important;
+            color: var(--corp-ink) !important;
+            text-align: left !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+        }
+
+        .enterprise-role-card.is-active {
+            border-color: rgba(18, 61, 115, 0.52) !important;
+            background:
+                linear-gradient(135deg, rgba(18, 61, 115, 0.14), rgba(183, 139, 45, 0.10)),
+                var(--corp-surface) !important;
+            box-shadow: inset 0 0 0 1px rgba(18, 61, 115, 0.12) !important;
+        }
+
+        .enterprise-role-icon {
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 12px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: #e8eef6 !important;
+            color: var(--corp-navy) !important;
+            font-weight: 900 !important;
+            font-size: 13px !important;
+        }
+
+        .enterprise-role-card.is-active .enterprise-role-icon {
+            background: var(--corp-navy) !important;
+            color: #fff !important;
+        }
+
+        .enterprise-role-name,
+        .enterprise-role-desc {
+            display: block !important;
+            line-height: 1.1 !important;
+        }
+
+        .enterprise-role-name {
+            color: var(--corp-ink) !important;
+            font-weight: 900 !important;
+            font-size: 13px !important;
+            letter-spacing: -0.01em !important;
+        }
+
+        .enterprise-role-desc {
+            margin-top: 3px !important;
+            color: var(--corp-muted) !important;
+            font-weight: 700 !important;
+            font-size: 11px !important;
+        }
+
+        .legacy-role-btn,
+        .marquee-container,
+        .marquee-text {
+            display: none !important;
+        }
+
+        /* FUNDAMENTOS DE FORMULÁRIOS */
+        h1, h2, h3, h4, label, strong {
+            color: var(--corp-ink) !important;
+        }
+
+        .panel {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+
+        .panel.active {
+            display: block !important;
+        }
+
+        .config-section,
+        .calendar-section,
+        .modal-content,
+        .patient-record-search-card,
+        .user-form-card,
+        .user-list-card,
+        .visual-config-card,
+        .search-section,
+        .periods-config,
+        .monthly-limit-card,
+        .report-content,
+        .statistics-content,
+        .confirmation-modal,
+        .offline-card {
+            border: 1px solid var(--corp-line) !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92)) !important;
+            border-radius: var(--corp-radius-lg) !important;
+            box-shadow: var(--corp-shadow-soft) !important;
+            color: var(--corp-ink) !important;
+        }
+
+        body.dark-mode .config-section,
+        body.dark-mode .calendar-section,
+        body.dark-mode .modal-content,
+        body.dark-mode .patient-record-search-card,
+        body.dark-mode .user-form-card,
+        body.dark-mode .user-list-card,
+        body.dark-mode .visual-config-card,
+        body.dark-mode .search-section,
+        body.dark-mode .periods-config,
+        body.dark-mode .monthly-limit-card,
+        body.dark-mode .report-content,
+        body.dark-mode .statistics-content,
+        body.dark-mode .confirmation-modal,
+        body.dark-mode .offline-card,
+        body.dark .config-section,
+        body.dark .calendar-section,
+        body.dark .modal-content,
+        body.dark .patient-record-search-card,
+        body.dark .user-form-card,
+        body.dark .user-list-card,
+        body.dark .visual-config-card,
+        body.dark .search-section,
+        body.dark .periods-config,
+        body.dark .monthly-limit-card,
+        body.dark .report-content,
+        body.dark .statistics-content,
+        body.dark .confirmation-modal,
+        body.dark .offline-card {
+            background: linear-gradient(180deg, rgba(13,24,40,0.96), rgba(16,31,52,0.92)) !important;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]):not([type="color"]),
+        select,
+        textarea {
+            width: 100% !important;
+            min-height: 44px !important;
+            padding: 10px 13px !important;
+            border: 1px solid var(--corp-line-strong) !important;
+            border-radius: 13px !important;
+            background: var(--corp-surface) !important;
+            color: var(--corp-ink) !important;
+            font-size: 14px !important;
+            font-weight: 650 !important;
+            outline: none !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.60) !important;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]):not([type="color"]):focus,
+        select:focus,
+        textarea:focus {
+            border-color: rgba(18, 61, 115, 0.62) !important;
+            box-shadow: 0 0 0 4px rgba(18, 61, 115, 0.12) !important;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #6f7f93 !important;
+            opacity: 0.95 !important;
+        }
+
+        .form-group {
+            min-width: 0 !important;
+            margin: 0 !important;
+        }
+
+        .form-group label,
+        .search-filters > label,
+        .statistics-controls label {
+            display: block !important;
+            margin: 0 0 7px !important;
+            color: var(--corp-ink) !important;
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            font-weight: 900 !important;
+            letter-spacing: -0.01em !important;
+        }
+
+        .config-help,
+        small,
+        .patient-record-help,
+        .blocked-days-info {
+            color: var(--corp-muted) !important;
+            font-size: 12px !important;
+            line-height: 1.45 !important;
+        }
+
+        .btn-primary,
+        .btn-secondary,
+        .btn-danger,
+        button:not(.theme-toggle):not(.neon-toggle):not(.enterprise-role-card):not(.close):not(.nav-btn) {
+            min-height: 42px !important;
+            padding: 10px 16px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--corp-line-strong) !important;
+            font-size: 12px !important;
+            font-weight: 900 !important;
+            letter-spacing: -0.01em !important;
+            box-shadow: none !important;
+            cursor: pointer !important;
+        }
+
+        .btn-primary,
+        button.btn-primary {
+            background: linear-gradient(180deg, #164a86, var(--corp-navy)) !important;
+            border-color: rgba(9, 37, 74, 0.50) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-secondary,
+        button.btn-secondary {
+            background: var(--corp-surface) !important;
+            color: var(--corp-navy) !important;
+        }
+
+        .btn-danger,
+        button.btn-danger,
+        #resetMonthBtn,
+        #removeCustomDayBtn {
+            background: linear-gradient(180deg, #b33a32, #8f211b) !important;
+            border-color: rgba(143,33,27,0.45) !important;
+            color: #ffffff !important;
+        }
+
+        button:disabled,
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.56 !important;
+            cursor: not-allowed !important;
+            filter: grayscale(0.15) !important;
+        }
+
+        /* ADMIN: GRID HARMONIOSO */
+        #adminPanel .config-section {
+            max-width: none !important;
+            display: grid !important;
+            grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+            gap: 14px !important;
+            padding: 20px !important;
+            border-radius: 24px !important;
+        }
+
+        #adminPanel .config-section > h2 {
+            grid-column: 1 / -1 !important;
+            margin: 0 0 2px !important;
+            font-size: 21px !important;
+            font-weight: 950 !important;
+            letter-spacing: -0.04em !important;
+        }
+
+        #adminPanel .config-section > .form-group:first-of-type {
+            grid-column: span 3 !important;
+            display: grid !important;
+            grid-template-columns: minmax(0, 1.3fr) minmax(0, .9fr) !important;
+            gap: 10px !important;
+            align-content: start !important;
+            padding: 14px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 18px !important;
+            background: rgba(255,255,255,0.52) !important;
+        }
+
+        #adminPanel .config-section > .form-group:first-of-type > label {
+            grid-column: 1 / -1 !important;
+        }
+
+        #adminPanel .config-section > .monthly-limit-card,
+        #adminPanel .config-section > .form-group:has(#monthlyBookingLimitInput) {
+            grid-column: span 9 !important;
+            display: grid !important;
+            grid-template-columns: minmax(240px, .9fr) minmax(160px, .45fr) minmax(320px, 1.15fr) !important;
+            gap: 12px !important;
+            align-items: end !important;
+            padding: 14px !important;
+            box-shadow: none !important;
+        }
+
+        #adminPanel .config-section > .monthly-limit-card label,
+        #adminPanel .config-section > .monthly-limit-card small {
+            margin: 0 !important;
+            align-self: center !important;
+        }
+
+        #monthlyBookingLimitInput {
+            width: 100% !important;
+        }
+
+        #adminPanel .config-section > .form-group:has(.days-selector) {
+            grid-column: 1 / -1 !important;
+            padding: 14px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 18px !important;
+            background: rgba(255,255,255,0.52) !important;
+        }
+
+        .days-selector,
+        .filter-options {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+            align-items: center !important;
+        }
+
+        .days-selector label,
+        .filter-options label,
+        .checkbox-line label {
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            min-height: 34px !important;
+            padding: 8px 10px !important;
+            border-radius: 999px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: var(--corp-surface) !important;
+            color: var(--corp-ink) !important;
+            font-size: 12px !important;
+            font-weight: 850 !important;
+            margin: 0 !important;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 15px !important;
+            height: 15px !important;
+            accent-color: var(--corp-navy) !important;
+            margin: 0 !important;
+        }
+
+        #adminPanel .periods-config {
+            grid-column: 1 / -1 !important;
+            padding: 16px !important;
+            border-radius: 18px !important;
+            box-shadow: none !important;
+        }
+
+        .periods-config h3 {
+            margin: 0 0 12px !important;
+            font-size: 16px !important;
+            font-weight: 950 !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        #periodsContainer,
+        #customDayPeriodsContainer {
+            display: grid !important;
+            gap: 10px !important;
+        }
+
+        .period-item {
+            display: grid !important;
+            grid-template-columns: minmax(220px, 2.2fr) minmax(120px, .8fr) minmax(120px, .8fr) minmax(90px, .55fr) 42px !important;
+            gap: 10px !important;
+            align-items: center !important;
+            padding: 10px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 16px !important;
+            background: rgba(255,255,255,0.66) !important;
+        }
+
+        .remove-period {
+            width: 42px !important;
+            min-width: 42px !important;
+            height: 42px !important;
+            padding: 0 !important;
+            border-radius: 13px !important;
+            color: #fff !important;
+            background: #b42318 !important;
+            border: 0 !important;
+            font-size: 18px !important;
+            line-height: 1 !important;
+        }
+
+        #addPeriodBtn,
+        #addCustomPeriodBtn {
+            width: auto !important;
+            justify-self: start !important;
+            margin: 12px 0 0 !important;
+        }
+
+        #adminPanel .config-section > button {
+            grid-column: span 2 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            justify-self: stretch !important;
+            white-space: nowrap !important;
+        }
+
+        #saveConfigBtn {
+            grid-column: span 2 !important;
+        }
+
+        #resetMonthBtn {
+            grid-column: span 2 !important;
+        }
+
+        /* CALENDÁRIO TIPO POLTRONA / RESERVA */
+        #userPanel .calendar-section,
+        .calendar-section {
+            padding: 18px !important;
+            border-radius: 24px !important;
+            max-width: none !important;
+            overflow: hidden !important;
+        }
+
+        .calendar-header {
+            display: grid !important;
+            grid-template-columns: 42px minmax(0, 1fr) 42px !important;
+            gap: 12px !important;
+            align-items: center !important;
+            margin: 0 0 14px !important;
+            padding: 0 !important;
+        }
+
+        .calendar-header h2,
+        .calendar-header h3,
+        #calendarTitle,
+        #blockedCalendarTitle,
+        #customizeCalendarTitle {
+            margin: 0 !important;
+            text-align: center !important;
+            color: var(--corp-ink) !important;
+            font-size: 19px !important;
+            font-weight: 950 !important;
+            letter-spacing: -0.035em !important;
+        }
+
+        .nav-btn {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border-radius: 14px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: var(--corp-surface) !important;
+            color: var(--corp-navy) !important;
+            font-size: 17px !important;
+            font-weight: 900 !important;
+            box-shadow: none !important;
+        }
+
+        .calendar-grid {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: repeat(7, minmax(54px, 1fr)) !important;
+            gap: 10px !important;
+            padding: 14px !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 22px !important;
+            background:
+                linear-gradient(180deg, rgba(9,37,74,0.035), rgba(9,37,74,0.015)),
+                #f2f5f8 !important;
+        }
+
+        .calendar-grid > * {
+            position: relative !important;
+            min-width: 0 !important;
+            min-height: 72px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 10px !important;
+            border-radius: 17px !important;
+            border: 1px solid rgba(9, 37, 74, 0.14) !important;
+            background:
+                linear-gradient(180deg, #ffffff 0%, #f7fafc 100%) !important;
+            color: var(--corp-ink) !important;
+            font-weight: 900 !important;
+            font-size: 13px !important;
+            box-shadow:
+                inset 0 -8px 0 rgba(9, 37, 74, 0.035),
+                0 8px 16px rgba(9, 37, 74, 0.06) !important;
+            overflow: hidden !important;
+        }
+
+        .calendar-grid > *:nth-child(-n+7) {
+            min-height: 38px !important;
+            height: 38px !important;
+            padding: 6px !important;
+            border-radius: 13px !important;
+            background: #e8edf4 !important;
+            color: var(--corp-muted) !important;
+            box-shadow: none !important;
+            font-size: 11px !important;
+            font-weight: 950 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.02em !important;
+        }
+
+        .calendar-grid > *:not(:nth-child(-n+7)):not(:empty)::before {
+            content: "";
+            position: absolute;
+            top: 9px;
+            left: 50%;
+            width: 46%;
+            height: 6px;
+            border-radius: 999px;
+            transform: translateX(-50%);
+            background: rgba(9, 37, 74, 0.10);
+        }
+
+        .calendar-grid > *:not(:nth-child(-n+7)):not(:empty)::after {
+            content: "";
+            position: absolute;
+            left: 18%;
+            right: 18%;
+            bottom: 8px;
+            height: 8px;
+            border-radius: 999px 999px 10px 10px;
+            background: rgba(9, 37, 74, 0.07);
+        }
+
+        .calendar-day.available,
+        .calendar-grid > .available {
+            border-color: color-mix(in srgb, var(--corp-seat) 74%, #ffffff 26%) !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,255,252,0.94)) !important;
+            box-shadow:
+                inset 0 0 0 1px color-mix(in srgb, var(--corp-seat) 58%, transparent 42%),
+                inset 0 -10px 0 rgba(31, 157, 98, 0.09),
+                0 10px 20px rgba(31, 157, 98, 0.10) !important;
+        }
+
+        .calendar-day.available::before,
+        .calendar-grid > .available::before {
+            background: color-mix(in srgb, var(--corp-seat) 62%, #ffffff 38%) !important;
+        }
+
+        .calendar-day.booked,
+        .calendar-day.full,
+        .calendar-day.fully-booked,
+        .calendar-day.unavailable,
+        .calendar-day.blocked,
+        .calendar-day.selected,
+        .calendar-grid > .booked,
+        .calendar-grid > .full,
+        .calendar-grid > .fully-booked,
+        .calendar-grid > .unavailable,
+        .calendar-grid > .blocked,
+        .calendar-grid > .selected {
+            border-color: rgba(183, 139, 45, 0.64) !important;
+            background:
+                linear-gradient(180deg, #183f6f 0%, #09254a 100%) !important;
+            color: #ffffff !important;
+            box-shadow:
+                inset 0 -10px 0 rgba(0,0,0,0.10),
+                inset 0 0 0 1px rgba(255,255,255,0.08),
+                0 12px 24px rgba(9, 37, 74, 0.18) !important;
+        }
+
+        .calendar-day.booked::before,
+        .calendar-day.full::before,
+        .calendar-day.fully-booked::before,
+        .calendar-day.unavailable::before,
+        .calendar-day.blocked::before,
+        .calendar-day.selected::before,
+        .calendar-grid > .booked::before,
+        .calendar-grid > .full::before,
+        .calendar-grid > .fully-booked::before,
+        .calendar-grid > .unavailable::before,
+        .calendar-grid > .blocked::before,
+        .calendar-grid > .selected::before {
+            background: rgba(255,255,255,0.22) !important;
+        }
+
+        .calendar-day.today,
+        .calendar-grid > .today {
+            outline: 3px solid rgba(183, 139, 45, 0.22) !important;
+            outline-offset: -3px !important;
+        }
+
+        .calendar-day.empty,
+        .calendar-day.disabled,
+        .calendar-day.past,
+        .calendar-grid > .empty,
+        .calendar-grid > .disabled,
+        .calendar-grid > .past {
+            opacity: 0.58 !important;
+            background: rgba(255,255,255,0.44) !important;
+            color: var(--corp-muted-2) !important;
+            box-shadow: none !important;
+        }
+
+        .calendar-day span,
+        .calendar-grid > * span {
+            position: relative !important;
+            z-index: 2 !important;
+        }
+
+        .periods-list {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+            gap: 10px !important;
+            margin-top: 12px !important;
+        }
+
+        .periods-list > * {
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 16px !important;
+            background: var(--corp-surface) !important;
+            padding: 14px !important;
+            box-shadow: 0 8px 18px rgba(9,37,74,0.08) !important;
+        }
+
+        /* MODAIS: CAMPOS EM GRID, SEM INPUTS PEQUENOS */
+        .modal {
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 26px !important;
+            overflow: auto !important;
+            background: rgba(5, 16, 32, 0.62) !important;
+            backdrop-filter: blur(7px) saturate(0.9) !important;
+        }
+
+        .modal-content {
+            position: relative !important;
+            width: min(960px, calc(100vw - 38px)) !important;
+            max-width: min(960px, calc(100vw - 38px)) !important;
+            max-height: calc(100dvh - 52px) !important;
+            overflow: auto !important;
+            padding: 26px !important;
+            border-radius: 24px !important;
+            box-shadow: var(--corp-shadow) !important;
+            scrollbar-gutter: stable !important;
+        }
+
+        .modal-content > h2,
+        .modal-content > .confirmation-header h2 {
+            margin: 0 42px 18px 0 !important;
+            font-size: 22px !important;
+            font-weight: 950 !important;
+            letter-spacing: -0.04em !important;
+        }
+
+        .close {
+            position: sticky !important;
+            top: 0 !important;
+            float: right !important;
+            z-index: 5 !important;
+            width: 36px !important;
+            height: 36px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: -10px -8px 0 12px !important;
+            border-radius: 13px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: var(--corp-surface) !important;
+            color: var(--corp-navy) !important;
+            font-size: 24px !important;
+            font-weight: 600 !important;
+            line-height: 1 !important;
+            opacity: 1 !important;
+            box-shadow: 0 8px 20px rgba(9,37,74,0.10) !important;
+            cursor: pointer !important;
+        }
+
+        .patient-registration-modal-content,
+        .user-registration-modal-content,
+        .visual-config-modal-content,
+        .report-modal {
+            width: min(1180px, calc(100vw - 38px)) !important;
+            max-width: min(1180px, calc(100vw - 38px)) !important;
+        }
+
+        .patient-record-search-card {
+            padding: 18px !important;
+            margin: 0 0 18px !important;
+            box-shadow: none !important;
+        }
+
+        .patient-record-search-card h3,
+        .patient-form-title,
+        .user-form-card h3,
+        .user-list-card h3,
+        .visual-config-card h3 {
+            margin: 0 0 10px !important;
+            font-size: 17px !important;
+            font-weight: 950 !important;
+            letter-spacing: -0.03em !important;
+        }
+
+        .patient-record-search-row {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 150px !important;
+            gap: 10px !important;
+            align-items: end !important;
+            margin-top: 12px !important;
+        }
+
+        .patient-registration-form,
+        .email-config-form,
+        .set-password-form,
+        .booking-password-form,
+        .cancellation-form {
+            display: grid !important;
+            grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+            gap: 14px !important;
+            align-items: start !important;
+        }
+
+        .patient-registration-form > p,
+        .email-config-form > .form-group:first-child,
+        .set-password-form > *,
+        .booking-password-form > *,
+        .cancellation-form > * {
+            grid-column: 1 / -1 !important;
+        }
+
+        .patient-registration-form .form-group:has(#regDoc) {
+            grid-column: span 4 !important;
+        }
+
+        #regRankField,
+        .patient-registration-form .form-group:has(#regRank) {
+            grid-column: span 4 !important;
+        }
+
+        #regMilitaryUnitField,
+        .patient-registration-form .form-group:has(input[name="regMilitaryUnit"]) {
+            grid-column: span 4 !important;
+        }
+
+        .patient-registration-form .form-group:has(#regName) {
+            grid-column: span 6 !important;
+        }
+
+        .patient-registration-form .form-group:has(#regEmail) {
+            grid-column: span 6 !important;
+        }
+
+        .patient-registration-form .form-group:has(#regPhone) {
+            grid-column: span 5 !important;
+        }
+
+        .pm-phone-suggestion-wrap {
+            margin-top: 10px !important;
+            padding: 12px !important;
+            border-radius: 15px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: rgba(9,37,74,0.035) !important;
+        }
+
+        .pm-autofill-status {
+            display: block !important;
+            min-height: 26px !important;
+            margin-top: 8px !important;
+            padding: 7px 10px !important;
+            border-radius: 999px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: rgba(31, 157, 98, 0.08) !important;
+            color: var(--corp-green) !important;
+            font-weight: 800 !important;
+        }
+
+        .patient-registration-form > .booking-actions,
+        .email-config-form > .booking-actions,
+        .set-password-form > .booking-actions,
+        .booking-password-form > .booking-actions,
+        .cancellation-form > .booking-actions,
+        .booking-actions {
+            grid-column: 1 / -1 !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin-top: 4px !important;
+        }
+
+        .booking-actions .btn-secondary,
+        .booking-actions .btn-primary,
+        .booking-actions .btn-danger,
+        .booking-actions button {
+            min-width: 150px !important;
+            margin: 0 !important;
+        }
+
+        .email-config-form .form-group:has(#emailJsPublicKey),
+        .email-config-form .form-group:has(#emailJsServiceId),
+        .email-config-form .form-group:has(#emailJsTemplateId) {
+            grid-column: span 4 !important;
+        }
+
+        .email-config-form .form-group:has(#emailFromName),
+        .email-config-form .form-group:has(#emailReplyTo),
+        .email-config-form .form-group:has(#emailAdminCopy) {
+            grid-column: span 4 !important;
+        }
+
+        .email-config-form .checkbox-line,
+        .email-config-form .form-group:last-of-type {
+            grid-column: 1 / -1 !important;
+        }
+
+        .user-registration-grid,
+        .visual-config-grid {
+            display: grid !important;
+            grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) !important;
+            gap: 16px !important;
+            align-items: start !important;
+        }
+
+        .visual-config-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        }
+
+        .user-form-card,
+        .user-list-card,
+        .visual-config-card {
+            padding: 18px !important;
+            box-shadow: none !important;
+        }
+
+        .specialty-add-row {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) 180px !important;
+            gap: 10px !important;
+            align-items: end !important;
+        }
+
+        .visual-preview {
+            border-radius: 16px !important;
+            border: 1px solid var(--corp-line) !important;
+            background: rgba(9,37,74,0.035) !important;
+            overflow: hidden !important;
+        }
+
+        .search-section {
+            padding: 18px !important;
+            margin: 0 0 16px !important;
+            box-shadow: none !important;
+        }
+
+        .search-section .form-group,
+        .search-filters {
+            margin-bottom: 12px !important;
+        }
+
+        .search-section > button,
+        #searchBtn,
+        #patientSearchBtn,
+        #verifyPatientBtn {
+            width: auto !important;
+            min-width: 170px !important;
+        }
+
+        .share-buttons {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 10px !important;
+        }
+
+        .share-btn {
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        /* RESULTADOS / LISTAS */
+        .search-results,
+        .patient-record-results,
+        .patient-record-details,
+        #systemUsersList,
+        #registeredPatientsList,
+        .report-content,
+        .statistics-content {
+            border-radius: 18px !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            overflow: hidden !important;
+            border: 1px solid var(--corp-line) !important;
+            border-radius: 16px !important;
+        }
+
+        th, td {
+            padding: 12px !important;
+            border-bottom: 1px solid var(--corp-line) !important;
+            color: var(--corp-ink) !important;
+            font-size: 13px !important;
+        }
+
+        th {
+            background: rgba(9, 37, 74, 0.06) !important;
+            font-size: 11px !important;
+            font-weight: 950 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.04em !important;
+            color: var(--corp-muted) !important;
+        }
+
+        /* OVERLAYS */
+        .offline-overlay,
+        .email-sending-overlay {
+            backdrop-filter: blur(7px) !important;
+            background: rgba(5,16,32,0.62) !important;
+        }
+
+        .pwa-install-prompt {
+            z-index: 1000 !important;
+        }
+
+        .pwa-install-arrow {
+            border-radius: 999px !important;
+            background: var(--corp-navy) !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.16) !important;
+            box-shadow: 0 16px 34px rgba(9,37,74,0.25) !important;
+        }
+
+        @media (max-width: 1180px) {
+            header.enterprise-header {
+                grid-template-columns: 1fr !important;
+            }
+
+            .enterprise-controls {
+                grid-template-columns: auto 1fr !important;
+                grid-template-rows: auto !important;
+                align-items: stretch !important;
+            }
+
+            .enterprise-utilities {
+                justify-content: flex-start !important;
+                align-items: flex-start !important;
+            }
+
+            #adminPanel .config-section > .form-group:first-of-type,
+            #adminPanel .config-section > .monthly-limit-card,
+            #adminPanel .config-section > .form-group:has(#monthlyBookingLimitInput) {
+                grid-column: 1 / -1 !important;
+            }
+
+            #adminPanel .config-section > button {
+                grid-column: span 3 !important;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .container {
+                width: min(100% - 20px, 100%) !important;
+                padding-top: 10px !important;
+            }
+
+            .enterprise-brand {
+                grid-template-columns: 58px minmax(0, 1fr) !important;
+                min-height: 0 !important;
+                padding: 14px !important;
+            }
+
+            header .logo-fiber-orbit {
+                width: 56px !important;
+                height: 56px !important;
+                min-width: 56px !important;
+                border-radius: 17px !important;
+            }
+
+            .enterprise-subtitle {
+                display: none !important;
+            }
+
+            header.enterprise-header h1 {
+                font-size: 22px !important;
+            }
+
+            .enterprise-controls {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .enterprise-role-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            #adminPanel .config-section {
+                grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+                padding: 14px !important;
+            }
+
+            #adminPanel .config-section > .monthly-limit-card,
+            #adminPanel .config-section > .form-group:has(#monthlyBookingLimitInput) {
+                grid-template-columns: 1fr !important;
+            }
+
+            #adminPanel .config-section > button {
+                grid-column: span 3 !important;
+            }
+
+            .period-item {
+                grid-template-columns: 1fr 1fr !important;
+            }
+
+            .period-item .period-name,
+            .period-item .period-slots {
+                grid-column: span 1 !important;
+            }
+
+            .period-item .remove-period {
+                grid-column: 1 / -1 !important;
+                width: 100% !important;
+            }
+
+            .calendar-grid {
+                gap: 7px !important;
+                padding: 10px !important;
+                grid-template-columns: repeat(7, minmax(38px, 1fr)) !important;
+            }
+
+            .calendar-grid > * {
+                min-height: 56px !important;
+                border-radius: 13px !important;
+                font-size: 12px !important;
+                padding: 7px !important;
+            }
+
+            .calendar-grid > *:nth-child(-n+7) {
+                min-height: 32px !important;
+                height: 32px !important;
+                font-size: 9px !important;
+            }
+
+            .patient-registration-form,
+            .email-config-form,
+            .set-password-form,
+            .booking-password-form,
+            .cancellation-form {
+                grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+            }
+
+            .patient-registration-form .form-group:has(#regDoc),
+            #regRankField,
+            .patient-registration-form .form-group:has(#regRank),
+            #regMilitaryUnitField,
+            .patient-registration-form .form-group:has(input[name="regMilitaryUnit"]),
+            .patient-registration-form .form-group:has(#regName),
+            .patient-registration-form .form-group:has(#regEmail),
+            .patient-registration-form .form-group:has(#regPhone),
+            .email-config-form .form-group:has(#emailJsPublicKey),
+            .email-config-form .form-group:has(#emailJsServiceId),
+            .email-config-form .form-group:has(#emailJsTemplateId),
+            .email-config-form .form-group:has(#emailFromName),
+            .email-config-form .form-group:has(#emailReplyTo),
+            .email-config-form .form-group:has(#emailAdminCopy) {
+                grid-column: 1 / -1 !important;
+            }
+
+            .user-registration-grid,
+            .visual-config-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .patient-record-search-row,
+            .specialty-add-row {
+                grid-template-columns: 1fr !important;
+            }
+
+            .booking-actions,
+            .patient-registration-form > .booking-actions,
+            .email-config-form > .booking-actions {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .booking-actions button,
+            .booking-actions .btn-secondary,
+            .booking-actions .btn-primary,
+            .booking-actions .btn-danger {
+                width: 100% !important;
+            }
+
+            .share-buttons {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .container {
+                width: calc(100% - 12px) !important;
+            }
+
+            header.enterprise-header,
+            .config-section,
+            .calendar-section,
+            .modal-content {
+                border-radius: 18px !important;
+            }
+
+            .enterprise-brand {
+                grid-template-columns: 1fr !important;
+            }
+
+            header .logo-fiber-orbit {
+                width: 54px !important;
+                height: 54px !important;
+            }
+
+            .enterprise-role-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            #adminPanel .config-section {
+                grid-template-columns: 1fr !important;
+            }
+
+            #adminPanel .config-section > *,
+            #adminPanel .config-section > button {
+                grid-column: 1 / -1 !important;
+            }
+
+            .modal {
+                padding: 10px !important;
+            }
+
+            .modal-content,
+            .patient-registration-modal-content,
+            .user-registration-modal-content,
+            .visual-config-modal-content,
+            .report-modal {
+                width: calc(100vw - 20px) !important;
+                max-width: calc(100vw - 20px) !important;
+                max-height: calc(100dvh - 20px) !important;
+                padding: 18px !important;
+            }
+
+            .calendar-grid {
+                gap: 5px !important;
+                padding: 8px !important;
+            }
+
+            .calendar-grid > * {
+                min-height: 48px !important;
+                border-radius: 11px !important;
+                font-size: 11px !important;
+            }
+        }
+    </style>
+
+
+</head>
+<body>
+    <div id="pwaInstallPrompt" class="pwa-install-prompt" hidden>
+        <button id="pwaInstallButton" class="pwa-install-arrow" type="button" aria-label="Instalar FMU">
+            <span class="pwa-install-arrow-symbol" aria-hidden="true">↙</span>
+            <span class="pwa-install-label">Instalar FMU</span>
+        </button>
+    </div>
+
+
+    <div id="offlineOverlay" class="offline-overlay" hidden>
+        <div class="offline-card" role="alert" aria-live="assertive">
+            <div class="offline-icon" aria-hidden="true">
+                <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="43" cy="43" r="40" fill="currentColor" opacity="0.08"/>
+                    <path d="M18 35C32 23 54 23 68 35" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M29 47C37 40 49 40 57 47" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M41 59H45" stroke="currentColor" stroke-width="8" stroke-linecap="round"/>
+                    <path d="M22 66L66 22" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2>Você está off-line</h2>
+            <p>Solicitamos conexão com a internet para sincronizar cadastros, agenda, prontuário e alterações do sistema.</p>
+            <p class="offline-small">Conecte-se ao Wi‑Fi ou dados móveis e toque em tentar novamente.</p>
+            <button id="offlineRetryBtn" class="btn-primary" type="button">Tentar novamente</button>
+        </div>
+    </div>
+
+    <div id="emailSendingOverlay" class="email-sending-overlay" hidden aria-live="polite" aria-label="Enviando comprovante por email">
+        <div class="email-sending-logo-wrap">
+            <span class="logo-fiber-orbit email-sending-logo-orbit" aria-hidden="true">
+                <span class="logo-stack">
+                    <img src="COPOM-NOVO (1).png" alt="" class="logo logo-primary">
+                </span>
+            </span>
+            <p>Enviando comprovante...</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="enterprise-header">
+            <div class="enterprise-brand">
+                <span class="logo-fiber-orbit" aria-hidden="false" id="logoFiberOrbit">
+                    <span class="logo-stack" id="logoSwapContainer" data-logo-state="primary">
+                        <img src="COPOM-NOVO (1).png" alt="Logo COPOM" class="logo logo-primary">
+                        <img src="FMU-logo-alt.png" alt="Logo FMU Centro Universitário" class="logo logo-secondary">
+                    </span>
+                </span>
+
+                <div class="enterprise-title-wrap">
+                    <span class="enterprise-kicker">Sistema Policial Corporativo</span>
+                    <h1>FMU - Agendamento de Fisioterapia</h1>
+                    <p class="enterprise-subtitle">
+                        Central corporativa para cadastro, consulta e gestão de agendamentos, com interface responsiva para operação institucional segura em desktop, tablet e celular.
+                    </p>
+                    <div class="enterprise-meta" aria-label="Informações do sistema">
+                        <span class="enterprise-chip">PMESP</span>
+                        <span class="enterprise-chip">COPOM SP</span>
+                        <span class="enterprise-chip">N-DIT</span>
+                        <span class="enterprise-chip">Agenda de Fisioterapia</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-mode enterprise-controls">
+                <div class="enterprise-utilities" aria-label="Controles visuais">
+                    <button id="themeModeBtn" class="theme-toggle" title="Alternar tema" type="button" aria-label="Alternar tema">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+
+                    <button id="neonBorderBtn" class="neon-toggle" title="Cor de destaque do calendário" aria-label="Cor de destaque do calendário" type="button">
+                        <span aria-hidden="true">✦</span>
+                    </button>
+
+                    <input id="neonBorderColorInput" class="neon-color-input" type="color" value="#39ff14" aria-label="Escolher cor de destaque do calendário" />
+                    <button id="exitAdminBtn" type="button" style="display: none;">Sair</button>
+                </div>
+
+                <div class="role-select-wrap">
+                    <div class="enterprise-role-heading">
+                        <div>
+                            <label for="roleSelect">Nível de acesso</label>
+                            <div class="enterprise-role-title">Escolha o ambiente de trabalho</div>
+                        </div>
+                        <span class="enterprise-role-badge">Seguro</span>
+                    </div>
+
+                    <select id="roleSelect" class="role-select" aria-label="Escolher nível de acesso">
+                        <option value="patient" selected>Paciente</option>
+                        <option value="myConsultations">Minhas Consultas</option>
+                        <option value="specialist">Especialista</option>
+                        <option value="admin">Administrador</option>
+                    </select>
+
+                    <div class="enterprise-role-grid" aria-label="Atalhos de nível de acesso">
+                        <button class="enterprise-role-card is-active" type="button" data-role-card="patient">
+                            <span class="enterprise-role-icon" aria-hidden="true">P</span>
+                            <span>
+                                <span class="enterprise-role-name">Paciente</span>
+                                <span class="enterprise-role-desc">Agendar atendimento</span>
+                            </span>
+                        </button>
+                        <button class="enterprise-role-card" type="button" data-role-card="myConsultations">
+                            <span class="enterprise-role-icon" aria-hidden="true">C</span>
+                            <span>
+                                <span class="enterprise-role-name">Consultas</span>
+                                <span class="enterprise-role-desc">Acompanhar reservas</span>
+                            </span>
+                        </button>
+                        <button class="enterprise-role-card" type="button" data-role-card="specialist">
+                            <span class="enterprise-role-icon" aria-hidden="true">E</span>
+                            <span>
+                                <span class="enterprise-role-name">Especialista</span>
+                                <span class="enterprise-role-desc">Área técnica</span>
+                            </span>
+                        </button>
+                        <button class="enterprise-role-card" type="button" data-role-card="admin">
+                            <span class="enterprise-role-icon" aria-hidden="true">A</span>
+                            <span>
+                                <span class="enterprise-role-name">Administrador</span>
+                                <span class="enterprise-role-desc">Gestão completa</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="adminModeBtn" class="legacy-role-btn" type="button" hidden style="display:none;">Administrador</button>
+                <button id="userModeBtn" class="active legacy-role-btn" type="button" hidden style="display:none;">Paciente</button>
+            </div>
+        </header>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="panel">
+            <div class="config-section">
+                <h2>Configuração do Mês</h2>
+                <div class="form-group">
+                    <label>Mês/Ano:</label>
+                    <select id="monthSelect"></select>
+                    <select id="yearSelect"></select>
+                </div>
+                <div class="form-group monthly-limit-card">
+                    <label for="monthlyBookingLimitInput">Limite mensal de agendamentos por paciente:</label>
+                    <input
+                        type="number"
+                        id="monthlyBookingLimitInput"
+                        min="0"
+                        max="99"
+                        value="0"
+                        placeholder="0 = sem limite"
+                        style="width: 180px;"
+                    />
+                    <small class="config-help">Digite 0 para não limitar. Exemplo: 2 permite no máximo 2 agendamentos do mesmo paciente no mês selecionado.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label>Dias Disponíveis:</label>
+                    <div class="days-selector">
+                        <label><input type="checkbox" value="0" checked> Domingo</label>
+                        <label><input type="checkbox" value="1" checked> Segunda</label>
+                        <label><input type="checkbox" value="2" checked> Terça</label>
+                        <label><input type="checkbox" value="3" checked> Quarta</label>
+                        <label><input type="checkbox" value="4" checked> Quinta</label>
+                        <label><input type="checkbox" value="5" checked> Sexta</label>
+                        <label><input type="checkbox" value="6" checked> Sábado</label>
+                    </div>
+                </div>
+
+                <div class="periods-config">
+                    <h3>Períodos do Dia</h3>
+                    <div id="periodsContainer">
+                        <div class="period-item">
+                            <select class="period-name">
+                                <option value="Manhã">Manhã</option>
+                                <option value="Tarde">Tarde</option>
+                                <option value="Noite">Noite</option>
+                            </select>
+                            <input type="time" value="08:00" class="period-start">
+                            <input type="time" value="12:00" class="period-end">
+                            <input type="number" placeholder="Vagas" value="5" min="1" class="period-slots">
+                            <button class="remove-period">×</button>
+                        </div>
+                    </div>
+                    <button id="addPeriodBtn" class="btn-secondary">+ Adicionar Período</button>
+                </div>
+
+                <button id="saveConfigBtn" class="btn-primary">Salvar Configuração</button>
+                <button id="searchBookingsBtn" class="btn-secondary" style="margin-left: 12px;">Pesquisar Agendamentos</button>
+                <button id="reportBtn" class="btn-secondary" style="margin-left: 12px;">Ver Relatório</button>
+                <button id="statisticsBtn" class="btn-secondary" style="margin-left: 12px;">Visualizar Ocupação</button>
+                <button id="generatePdfBtn" class="btn-secondary" style="margin-left: 12px;">Gerar PDF</button>
+                <button id="manageBlockedDaysBtn" class="btn-secondary" style="margin-left: 12px;">Gerenciar Dias Bloqueados</button>
+                <button id="customizeDayBtn" class="btn-secondary" style="margin-left: 12px;">Personalizado</button>
+                <button id="resetMonthBtn" class="btn-danger" style="margin-left: 12px;">Resetar Mês</button>
+                <button id="patientRegistrationBtn" class="btn-secondary" style="margin-left: 12px;">Cadastro de Pacientes</button>
+                <button id="userRegistrationBtn" class="btn-secondary" style="margin-left: 12px;">Cadastro Usuários</button>
+                <button id="emailConfigBtn" class="btn-secondary" style="margin-left: 12px;">Configurar Email</button>
+                <button id="visualConfigBtn" class="btn-secondary" style="margin-left: 12px;">Personalizar Visual</button>
+            </div>
+        </div>
+
+        <!-- Email Configuration Modal -->
+        <div id="emailConfigModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeEmailConfig">&times;</span>
+                <h2>Configuração de Email Automático</h2>
+                <div class="email-config-form">
+                    <div class="form-group">
+                        <p class="config-help">
+                            Este site é HTML, CSS e JavaScript. Por segurança, ele não usa senha SMTP/Gmail no navegador.
+                            Configure abaixo os dados do EmailJS para enviar o comprovante automaticamente após o agendamento.
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailJsPublicKey">EMAILJS_PUBLIC_KEY:</label>
+                        <input type="text" id="emailJsPublicKey" placeholder="Ex.: AbCdEfGh123456" autocomplete="off"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailJsServiceId">EMAILJS_SERVICE_ID:</label>
+                        <input type="text" id="emailJsServiceId" placeholder="Ex.: service_xxxxx" autocomplete="off"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailJsTemplateId">EMAILJS_TEMPLATE_ID:</label>
+                        <input type="text" id="emailJsTemplateId" placeholder="Ex.: template_xxxxx" autocomplete="off"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailFromName">Nome do remetente:</label>
+                        <input type="text" id="emailFromName" placeholder="FMU" value="FMU"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailReplyTo">Email para resposta:</label>
+                        <input type="email" id="emailReplyTo" placeholder="stqcopomsp@gmail.com"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="emailAdminCopy">Email para cópia/administração (opcional):</label>
+                        <input type="email" id="emailAdminCopy" placeholder="stqcopomsp@gmail.com"/>
+                    </div>
+
+                    <div class="form-group checkbox-line">
+                        <label>
+                            <input type="checkbox" id="emailAutoSend" checked>
+                            Enviar comprovante automaticamente ao confirmar agendamento
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <small class="config-help">
+                            No template do EmailJS, use <strong>{{to_email}}</strong> como destinatário e <strong>{{reply_to}}</strong> como resposta.
+                            Variáveis disponíveis: patient_name, appointment_date, appointment_period, appointment_time, patient_doc, patient_email, patient_phone, complaint, message.
+                        </small>
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <button class="btn-secondary" id="cancelEmailConfig">Cancelar</button>
+                        <button class="btn-primary" id="saveEmailConfig">Salvar Configuração</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Customization Modal -->
+        <div id="visualConfigModal" class="modal">
+            <div class="modal-content visual-config-modal-content">
+                <span class="close" id="closeVisualConfig">&times;</span>
+                <h2>Personalizar Visual</h2>
+                <p class="config-help">Altere o logo do cabeçalho e o background do sistema pelo painel administrador. Use imagens leves para carregar melhor no celular.</p>
+
+                <div class="visual-config-grid">
+                    <div class="visual-config-card">
+                        <h3>Logo do cabeçalho</h3>
+                        <div class="visual-preview visual-logo-preview">
+                            <img id="visualLogoPreview" src="COPOM-NOVO (1).png" alt="Prévia do logo">
+                        </div>
+                        <input type="file" id="visualLogoInput" accept="image/*">
+                        <button class="btn-secondary" id="resetLogoVisual" type="button">Usar logo padrão</button>
+                    </div>
+
+                    <div class="visual-config-card">
+                        <h3>Background do sistema</h3>
+                        <div id="visualBackgroundPreview" class="visual-preview visual-background-preview"></div>
+                        <input type="file" id="visualBackgroundInput" accept="image/*">
+                        <button class="btn-secondary" id="resetBackgroundVisual" type="button">Usar background padrão</button>
+                    </div>
+
+                    <div class="visual-config-card">
+                        <h3>Cor dos dias disponíveis</h3>
+                        <div class="visual-preview visual-calendar-color-preview">
+                            <div id="visualAvailableDayPreview" class="calendar-day available"><span>15</span></div>
+                        </div>
+                        <input type="color" id="visualAvailableDayColor" value="#26be4c" aria-label="Cor dos dias disponíveis para agenda">
+                        <label for="visualAvailableDayBorderWidth" class="visual-range-label">Largura da borda: <strong id="visualAvailableDayBorderWidthValue">2px</strong></label>
+                        <input type="range" id="visualAvailableDayBorderWidth" min="1" max="8" step="1" value="2" aria-label="Largura da borda dos dias habilitados">
+                        <button class="btn-secondary" id="resetAvailableDayColor" type="button">Usar verde padrão</button>
+                    </div>
+                </div>
+
+                <div class="visual-theme-note">
+                    <span aria-hidden="true">☀️</span> Modo claro mostra apenas um sol sutil.
+                    <span aria-hidden="true">🌙</span> Modo noturno mostra apenas uma lua sutil.
+                </div>
+
+                <div class="booking-actions">
+                    <button class="btn-secondary" id="cancelVisualConfig" type="button">Cancelar</button>
+                    <button class="btn-primary" id="saveVisualConfig" type="button">Salvar Visual</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Registration Modal -->
+        <div id="patientRegistrationModal" class="modal">
+            <div class="modal-content patient-registration-modal-content">
+                <span class="close" id="closePatientRegistration">&times;</span>
+                <h2>Cadastro de Pacientes</h2>
+
+                <div class="patient-record-search-card">
+                    <h3>Procurar Paciente</h3>
+                    <p class="patient-record-help">Digite o CPF ou RE para localizar o cadastro e abrir o prontuário do paciente.</p>
+                    <div class="patient-record-search-row">
+                        <input type="text" id="adminPatientSearchInput" placeholder="Digite CPF ou RE" autocomplete="off" maxlength="14" inputmode="text"/>
+                        <button class="btn-primary" id="adminPatientSearchBtn" type="button">Procurar</button>
+                    </div>
+                    <div id="adminPatientSearchResults" class="patient-record-results"></div>
+                    <div id="adminPatientDetails" class="patient-record-details"></div>
+                </div>
+
+                <h3 class="patient-form-title">Novo / Atualizar Cadastro</h3>
+                <div class="patient-registration-form">
+                    <p class="config-help">Digite CPF ou RE. O sistema identifica automaticamente: até o 7º caractere é RE; acima disso é CPF.</p>
+                    
+                    <div class="form-group">
+                        <label for="regDoc" id="regDocLabel">CPF ou RE:</label>
+                        <input type="text" id="regDoc" placeholder="Digite CPF ou RE" maxlength="14" inputmode="text" autocomplete="off" required/>
+                        <small id="pmAutoFillStatus" class="pm-autofill-status" hidden></small>
+                    </div>
+                    
+                    <div id="regRankField" style="display: none;" class="form-group">
+                        <label for="regRank">Graduação:</label>
+                        <select id="regRank" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <option value="">Selecione a graduação</option>
+                            <option value="Sd PM 2cl">Sd PM 2cl</option>
+                            <option value="Sd PM 1cl">Sd PM 1cl</option>
+                            <option value="Cb PM">Cb PM</option>
+                            <option value="3º Sgt PM">3º Sgt PM</option>
+                            <option value="2º Sgt PM">2º Sgt PM</option>
+                            <option value="1º Sgt PM">1º Sgt PM</option>
+                            <option value="Subten PM">Subten PM</option>
+                            <option value="Asp Of PM">Asp Of PM</option>
+                            <option value="2º Ten PM">2º Ten PM</option>
+                            <option value="1º Ten PM">1º Ten PM</option>
+                            <option value="Cap PM">Cap PM</option>
+                            <option value="Maj PM">Maj PM</option>
+                            <option value="Ten Cel PM">Ten Cel PM</option>
+                            <option value="Cel PM">Cel PM</option>
+                        </select>
+                    </div>
+
+                    <div id="regMilitaryUnitField" style="display: none;" class="form-group">
+                        <label>Unidade:</label>
+                        <div class="filter-options">
+                            <label><input type="radio" name="regMilitaryUnit" value="copom"> COPOM</label>
+                            <label><input type="radio" name="regMilitaryUnit" value="outros"> Outros</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regName">Nome Completo:</label>
+                        <input type="text" id="regName" placeholder="Nome completo" required style="text-transform: uppercase;"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regEmail">Email:</label>
+                        <input type="email" id="regEmail" placeholder="email@exemplo.com" required/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="regPhone">WhatsApp (DDD + Telefone):</label>
+                        <input type="tel" id="regPhone" placeholder="11999999999" maxlength="11" required/>
+                        <small style="color: #666; font-size: 12px;">Digite apenas números (11 dígitos)</small>
+
+                        <div id="regPhoneSuggestionWrap" class="pm-phone-suggestion-wrap" hidden>
+                            <label for="regPhoneSuggestion">Celulares encontrados no cadastro PM:</label>
+                            <select id="regPhoneSuggestion" class="pm-phone-suggestion-select">
+                                <option value="">Selecione um telefone</option>
+                            </select>
+                            <small>Você pode escolher um dos celulares encontrados ou selecionar “Outro número” e digitar manualmente.</small>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <button class="btn-secondary" id="cancelPatientRegistration">Cancelar</button>
+                        <button class="btn-primary" id="savePatientRegistration" disabled>Salvar Cadastro</button>
+                    </div>
+                </div>
+                
+                <div id="registeredPatientsList" style="display:none;"></div>
+            </div>
+        </div>
+
+
+        <!-- User Registration Modal -->
+        <div id="userRegistrationModal" class="modal">
+            <div class="modal-content patient-registration-modal-content user-registration-modal-content">
+                <span class="close" id="closeUserRegistration">&times;</span>
+                <h2>Cadastro de Usuários</h2>
+                <p class="config-help">Cadastre, edite e exclua especialistas do sistema. Ao salvar, o usuário recebe uma senha temporária por e-mail quando o EmailJS estiver configurado.</p>
+
+                <div class="user-registration-grid">
+                    <div class="user-form-card">
+                        <h3>Novo / Editar Usuário</h3>
+                        <input type="hidden" id="userEditId" value="">
+                        <div class="form-group">
+                            <label for="userNameInput">Nome:</label>
+                            <input type="text" id="userNameInput" placeholder="Nome completo" style="text-transform: uppercase;">
+                        </div>
+                        <div class="form-group">
+                            <label for="userCpfInput">CPF:</label>
+                            <input type="text" id="userCpfInput" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" autocomplete="off" title="Digite 11 números do CPF">
+                        </div>
+                        <div class="form-group">
+                            <label for="userSpecialtySelect">Especialidade:</label>
+                            <select id="userSpecialtySelect"></select>
+                        </div>
+                        <div class="form-group specialty-add-row">
+                            <input type="text" id="newSpecialtyInput" placeholder="Adicionar nova especialidade">
+                            <button class="btn-secondary" id="addSpecialtyBtn" type="button">Adicionar Especialidade</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmailInput">Email:</label>
+                            <input type="email" id="userEmailInput" placeholder="email@exemplo.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="userPasswordInput">Senha temporária:</label>
+                            <input type="password" id="userPasswordInput" placeholder="Deixe em branco para gerar automaticamente" autocomplete="new-password">
+                            <small class="config-help">O usuário deverá alterar a senha no primeiro acesso como especialista.</small>
+                        </div>
+                        <div class="booking-actions">
+                            <button class="btn-secondary" id="clearUserFormBtn" type="button">Limpar</button>
+                            <button class="btn-primary" id="saveUserBtn" type="button">Salvar Usuário</button>
+                        </div>
+                    </div>
+
+                    <div class="user-list-card">
+                        <h3>Usuários Cadastrados</h3>
+                        <div id="systemUsersList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Panel -->
+        <div id="userPanel" class="panel active">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <button id="prevMonth" class="nav-btn">←</button>
+                    <h2 id="calendarTitle"></h2>
+                    <button id="nextMonth" class="nav-btn">→</button>
+                </div>
+                <div id="calendar" class="calendar-grid"></div>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div id="bookingModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle"></h2>
+                <div id="periodsAvailable" class="periods-list"></div>
+            </div>
+        </div>
+
+        <!-- Report Modal -->
+        <div id="reportModal" class="modal">
+            <div class="modal-content report-modal">
+                <span class="close" id="closeReport">&times;</span>
+                <h2>Relatório de Reservas</h2>
+                <div class="search-section" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label>Filtrar por data específica (opcional):</label>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <input type="date" id="reportDateFilter" style="padding: 12px; border: 2px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); border-radius: 8px; font-size: 14px;">
+                            <button id="applyReportDateFilter" class="btn-primary" style="margin: 0;">Buscar</button>
+                            <button id="clearReportDateFilter" class="btn-secondary" style="margin: 0;">Ver Todos</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="reportContent" class="report-content"></div>
+            </div>
+        </div>
+
+        <!-- Search Bookings Modal -->
+        <div id="searchBookingsModal" class="modal">
+            <div class="modal-content report-modal">
+                <span class="close" id="closeSearchBookings">&times;</span>
+                <h2>Pesquisar Agendamentos</h2>
+                
+                <div class="search-section">
+                    <div class="form-group">
+                        <label>Tipo de Paciente:</label>
+                        <div class="filter-options">
+                            <label><input type="radio" name="adminSearchType" value="civil" checked> Civil (CPF)</label>
+                            <label><input type="radio" name="adminSearchType" value="militar"> Militar (RE)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchCpf" id="searchDocLabel">CPF do Paciente:</label>
+                        <input 
+                            type="text" 
+                            id="searchCpf" 
+                            placeholder="000.000.000-00"
+                            maxlength="14"
+                        />
+                    </div>
+                    
+                    <div class="search-filters">
+                        <label>Filtrar por:</label>
+                        <div class="filter-options">
+                            <label><input type="radio" name="bookingFilter" value="all" checked> Todos</label>
+                            <label><input type="radio" name="bookingFilter" value="active"> Ativos</label>
+                            <label><input type="radio" name="bookingFilter" value="completed"> Encerrados</label>
+                            <label><input type="radio" name="bookingFilter" value="cancelled"> Cancelados</label>
+                        </div>
+                    </div>
+                    
+                    <button id="searchBtn" class="btn-primary">Buscar</button>
+                </div>
+                
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Blocked Days Modal -->
+        <div id="blockedDaysModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeBlockedDays">&times;</span>
+                <h2>Gerenciar Dias Bloqueados</h2>
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button id="prevMonthBlocked" class="nav-btn">←</button>
+                        <h3 id="blockedCalendarTitle"></h3>
+                        <button id="nextMonthBlocked" class="nav-btn">→</button>
+                    </div>
+                    <p class="blocked-days-info">Clique em um dia para bloquear ou desbloquear</p>
+                    <div id="blockedCalendar" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customize Day Modal -->
+        <div id="customizeDayModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeCustomizeDay">&times;</span>
+                <h2>Personalizar Dia Específico</h2>
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <button id="prevMonthCustomize" class="nav-btn">←</button>
+                        <h3 id="customizeCalendarTitle"></h3>
+                        <button id="nextMonthCustomize" class="nav-btn">→</button>
+                    </div>
+                    <p class="blocked-days-info">Clique em um dia para personalizar períodos e vagas (apenas dias sem agendamentos)</p>
+                    <div id="customizeCalendar" class="calendar-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customize Day Form Modal -->
+        <div id="customizeDayFormModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeCustomizeDayForm">&times;</span>
+                <h2 id="customizeDayFormTitle"></h2>
+                <div class="periods-config">
+                    <h3>Períodos do Dia</h3>
+                    <div id="customDayPeriodsContainer"></div>
+                    <button id="addCustomPeriodBtn" class="btn-secondary">+ Adicionar Período</button>
+                </div>
+                <div class="booking-actions" style="margin-top: 24px;">
+                    <button class="btn-secondary" id="cancelCustomDayBtn">Cancelar</button>
+                    <button class="btn-danger" id="removeCustomDayBtn">Remover Personalização</button>
+                    <button class="btn-primary" id="saveCustomDayBtn">Salvar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Password Modal -->
+        <div id="bookingPasswordModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeBookingPassword">&times;</span>
+                <h2>Senha Necessária</h2>
+                <div class="booking-password-form">
+                    <div class="form-group">
+                        <label for="bookingPasswordInput">Digite a senha para agendar:</label>
+                        <input 
+                            type="password" 
+                            id="bookingPasswordInput" 
+                            placeholder="Digite a senha"
+                            autocomplete="off"
+                        />
+                    </div>
+                    <div class="booking-actions">
+                        <button class="btn-secondary" id="cancelBookingPassword">Cancelar</button>
+                        <button class="btn-primary" id="confirmBookingPassword">Confirmar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Verification Modal for Booking -->
+        <div id="patientVerificationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closePatientVerification">&times;</span>
+                <h2>Verificar Cadastro</h2>
+                
+                <div class="search-section">
+                    <p class="config-help">Digite CPF ou RE. O sistema identifica automaticamente pelo tamanho do número digitado.</p>
+                    <div class="form-group">
+                        <label for="verifyDoc" id="verifyDocLabel">CPF ou RE:</label>
+                        <input 
+                            type="text" 
+                            id="verifyDoc" 
+                            placeholder="Digite CPF ou RE"
+                            maxlength="14"
+                            inputmode="text"
+                            autocomplete="off"
+                            required
+                        />
+                    </div>
+                    
+                    <button id="verifyPatientBtn" class="btn-primary" disabled>Verificar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Search Modal -->
+        <div id="patientSearchModal" class="modal">
+            <div class="modal-content report-modal">
+                <span class="close" id="closePatientSearch">&times;</span>
+                <h2>Consultar Meus Agendamentos</h2>
+                
+                <div class="search-section">
+                    <div class="form-group">
+                        <label>Tipo de Paciente:</label>
+                        <div class="filter-options">
+                            <label><input type="radio" name="patientType" value="civil" checked> Civil</label>
+                            <label><input type="radio" name="patientType" value="militar"> Militar</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="patientDoc" id="patientDocLabel">Digite seu CPF:</label>
+                        <input 
+                            type="text" 
+                            id="patientDoc" 
+                            placeholder="000.000.000-00"
+                            maxlength="14"
+                            required
+                        />
+                    </div>
+                    
+                    <button id="patientSearchBtn" class="btn-primary" disabled>Buscar Agendamentos</button>
+                </div>
+                
+                <div id="patientSearchResults" class="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Set Booking Password Modal -->
+        <div id="setBookingPasswordModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeSetBookingPassword">&times;</span>
+                <h2>Gerenciar Senha de Agendamento</h2>
+                <div class="set-password-form">
+                    <div id="passwordStatus" style="margin-bottom: 20px; padding: 12px; background: var(--bg-primary); border-radius: 8px;">
+                        <p><strong>Status:</strong> <span id="passwordStatusText">Desabilitado</span></p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newBookingPassword">Nova Senha:</label>
+                        <input 
+                            type="password" 
+                            id="newBookingPassword" 
+                            placeholder="Digite a nova senha"
+                            autocomplete="off"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmBookingPassword2">Confirmar Senha:</label>
+                        <input 
+                            type="password" 
+                            id="confirmBookingPassword2" 
+                            placeholder="Digite a senha novamente"
+                            autocomplete="off"
+                        />
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <button class="btn-secondary" id="cancelSetPassword">Cancelar</button>
+                        <button class="btn-danger" id="disablePasswordBtn" style="display: none;">Desabilitar Senha</button>
+                        <button class="btn-primary" id="savePasswordBtn">Salvar Senha</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Modal -->
+        <div id="statisticsModal" class="modal">
+            <div class="modal-content report-modal">
+                <span class="close" id="closeStatistics">&times;</span>
+                <h2>Estatísticas de Ocupação</h2>
+                <div class="statistics-controls">
+                    <div class="form-group" style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+                        <label style="margin: 0;">Mês/Ano:</label>
+                        <select id="statsMonthSelect"></select>
+                        <select id="statsYearSelect"></select>
+                    </div>
+                </div>
+                <div id="statisticsContent" class="statistics-content"></div>
+            </div>
+        </div>
+
+        <!-- Cancellation Modal -->
+        <div id="cancellationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeCancellation">&times;</span>
+                <h2>Cancelar Reserva</h2>
+                <div class="cancellation-form">
+                    <div class="form-group">
+                        <label for="cancelPassword">Senha de Administrador:</label>
+                        <input 
+                            type="password" 
+                            id="cancelPassword" 
+                            placeholder="Digite a senha"
+                            autocomplete="off"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cancelRequestedBy">Quem solicitou o cancelamento:</label>
+                        <input 
+                            type="text" 
+                            id="cancelRequestedBy" 
+                            placeholder="Nome de quem solicitou"
+                            style="text-transform: uppercase;"
+                        />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cancelReason">Motivo do cancelamento:</label>
+                        <textarea 
+                            id="cancelReason" 
+                            placeholder="Descreva o motivo (mínimo 10 caracteres)"
+                            minlength="10"
+                            rows="4"
+                            style="text-transform: uppercase;"
+                        ></textarea>
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <button class="btn-secondary" id="cancelCancelBtn">Voltar</button>
+                        <button class="btn-primary" id="confirmCancelBtn" disabled>Confirmar Cancelamento</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Confirmation Modal -->
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content confirmation-modal">
+                <span class="close" id="closeConfirmation">&times;</span>
+                <div class="confirmation-header">
+                    <svg class="check-icon" width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#4caf50" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <h2>Agendamento Confirmado!</h2>
+                </div>
+                
+                <div id="confirmationDetails" class="confirmation-details"></div>
+                
+                <div class="share-options">
+                    <h3>Compartilhar Comprovante:</h3>
+                    <div class="share-buttons">
+                        <button id="shareWhatsApp" class="share-btn whatsapp-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                            WhatsApp
+                        </button>
+                        <button id="shareEmail" class="share-btn email-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            Email
+                        </button>
+                        <button id="downloadPDF" class="share-btn pdf-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <button class="btn-primary" id="closeConfirmationBtn" style="width: 100%; margin-top: 20px;">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const roleSelect = document.getElementById('roleSelect');
+            const roleCards = Array.from(document.querySelectorAll('[data-role-card]'));
+
+            if (!roleSelect || roleCards.length === 0) return;
+
+            const syncRoleCards = () => {
+                roleCards.forEach((card) => {
+                    const isActive = card.dataset.roleCard === roleSelect.value;
+                    card.classList.toggle('is-active', isActive);
+                    card.setAttribute('aria-pressed', String(isActive));
+                });
+            };
+
+            roleCards.forEach((card) => {
+                card.addEventListener('click', () => {
+                    const selectedRole = card.dataset.roleCard;
+                    if (!selectedRole || roleSelect.value === selectedRole) {
+                        syncRoleCards();
+                        return;
+                    }
+
+                    roleSelect.value = selectedRole;
+                    roleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    syncRoleCards();
+                });
+            });
+
+            roleSelect.addEventListener('change', syncRoleCards);
+            syncRoleCards();
+        });
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="pwa-install.js" defer></script>
+    <script src="notice.js" defer></script>
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="state.js"></script>
+    <script type="module" src="calendar.js"></script>
+    <script type="module" src="booking.js"></script>
+    <script type="module" src="admin.js"></script>
+    <script type="module" src="modals.js"></script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>
