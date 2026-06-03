@@ -1,0 +1,16 @@
+Atualizacao aplicada:
+
+- Paciente, Consultas, Especialista e Administrador em listview vertical.
+- Paciente fica como padrao ao abrir.
+- Cabecalho e menu superior acompanham a largura do calendario no celular.
+- Logos COPOM e FMU no mesmo lado, alternando a cada 10 segundos.
+- Logo com animacao de atomos circulando.
+- service-worker atualizado para evitar carregar cache antigo.
+
+Para testar:
+1. Extraia o ZIP.
+2. Abra o CMD dentro da pasta copfisio-main.
+3. Rode: python -m http.server
+4. Acesse: http://localhost:8000
+
+Se aparecer codigo HTML puro na tela, voce provavelmente abriu o arquivo errado, abriu o codigo-fonte, ou o navegador carregou cache antigo. Use http://localhost:8000 e pressione Ctrl+F5.
