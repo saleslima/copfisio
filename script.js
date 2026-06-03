@@ -475,6 +475,13 @@ function openMyConsultationsModal() {
 function initializeRoleSelect() {
     const roleSelect = document.getElementById('roleSelect');
     if (!roleSelect) return;
+    // Padrão solicitado: paciente selecionado ao abrir o sistema.
+    roleSelect.value = 'patient';
+    document.querySelectorAll('[data-role-card]').forEach((card) => {
+        const active = card.dataset.roleCard === 'patient';
+        card.classList.toggle('is-active', active);
+        card.setAttribute('aria-pressed', String(active));
+    });
     roleSelect.addEventListener('change', async () => {
         const selected = roleSelect.value;
         if (selected === 'patient') {

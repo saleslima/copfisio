@@ -2011,6 +2011,340 @@
             }
         }
 
+    
+
+        /* =========================================================
+           CORREÇÃO FINAL SOLICITADA
+           - menu de acesso em LISTVIEW vertical
+           - Paciente como opção padrão
+           - logos COPOM/FMU no mesmo lado, alternando a cada 10s
+           - logo com animação de átomos circulando
+           - largura responsiva sem sobras laterais no celular
+        ========================================================= */
+        .pm-title-row,
+        .pm-command-row,
+        .role-select-wrap.pm-role-shell,
+        .pm-role-grid,
+        .pm-role-card,
+        #userPanel,
+        #userPanel .calendar-section,
+        .calendar-section {
+            box-sizing: border-box !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+        }
+
+        .pm-logo-right {
+            display: none !important;
+        }
+
+        .pm-title-row {
+            grid-template-columns: 86px minmax(0, 1fr) !important;
+        }
+
+        .pm-header-logo,
+        .pm-logo-left {
+            overflow: visible !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit,
+        header.pm-header-v5 .pm-logo-left .atom-logo-orbit {
+            --atom-size: 74px;
+            --atom-logo-size: 56px;
+            --logo-orbit-radius: 34px !important;
+            width: var(--atom-size) !important;
+            height: var(--atom-size) !important;
+            min-width: var(--atom-size) !important;
+            min-height: var(--atom-size) !important;
+            max-width: var(--atom-size) !important;
+            max-height: var(--atom-size) !important;
+            padding: 0 !important;
+            margin: 0 auto !important;
+            display: grid !important;
+            place-items: center !important;
+            position: relative !important;
+            overflow: visible !important;
+            border-radius: 50% !important;
+            background: radial-gradient(circle, rgba(255,255,255,.92) 0 56%, rgba(220,232,244,.55) 100%) !important;
+            box-shadow: 0 8px 18px rgba(7,21,38,.10) !important;
+            transform: none !important;
+            animation: none !important;
+            isolation: isolate !important;
+        }
+
+        body.dark-mode .pm-logo-left .atom-logo-orbit,
+        html[data-pm-theme="dark"] .pm-logo-left .atom-logo-orbit {
+            background: radial-gradient(circle, rgba(18,35,55,.96) 0 56%, rgba(5,13,24,.75) 100%) !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit::before,
+        .pm-logo-left .atom-logo-orbit::after {
+            animation: fiberLightTrail 4.8s linear infinite !important;
+            display: block !important;
+            opacity: .72 !important;
+            pointer-events: none !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit .logo-stack,
+        header.pm-header-v5 .pm-logo-left .atom-logo-orbit .logo-stack {
+            width: var(--atom-logo-size) !important;
+            height: var(--atom-logo-size) !important;
+            min-width: var(--atom-logo-size) !important;
+            min-height: var(--atom-logo-size) !important;
+            max-width: var(--atom-logo-size) !important;
+            max-height: var(--atom-logo-size) !important;
+            display: grid !important;
+            place-items: center !important;
+            position: relative !important;
+            z-index: 5 !important;
+            overflow: visible !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transform: none !important;
+            animation: none !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit .logo-stack img.logo,
+        .pm-logo-left .atom-logo-orbit .logo-stack .logo-primary,
+        .pm-logo-left .atom-logo-orbit .logo-stack .logo-secondary,
+        header.pm-header-v5 .pm-logo-left .atom-logo-orbit .logo-stack img.logo {
+            grid-area: 1 / 1 !important;
+            width: 100% !important;
+            height: 100% !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            padding: 6px !important;
+            margin: 0 !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            display: block !important;
+            position: relative !important;
+            border: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 14px !important;
+            transition: opacity 1.7s ease, transform 1.7s ease, filter 1.7s ease !important;
+            backface-visibility: hidden !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit .logo-primary {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            z-index: 6 !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit .logo-secondary {
+            opacity: 0 !important;
+            transform: scale(.82) !important;
+            z-index: 5 !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit.show-alt .logo-primary {
+            opacity: 0 !important;
+            transform: scale(.88) !important;
+            z-index: 5 !important;
+        }
+
+        .pm-logo-left .atom-logo-orbit.show-alt .logo-secondary {
+            opacity: 1 !important;
+            transform: scale(.82) !important;
+            z-index: 6 !important;
+        }
+
+        .pm-logo-left .atom-ring {
+            position: absolute !important;
+            inset: 8px !important;
+            border: 1.6px solid rgba(9, 42, 82, .26) !important;
+            border-radius: 50% !important;
+            z-index: 2 !important;
+            pointer-events: none !important;
+            transform-origin: center !important;
+            animation: pmAtomOrbit 4.8s linear infinite !important;
+            box-shadow: 0 0 7px rgba(180,137,52,.18) !important;
+        }
+
+        .pm-logo-left .atom-ring::after {
+            content: "" !important;
+            position: absolute !important;
+            right: -4px !important;
+            top: 50% !important;
+            width: 8px !important;
+            height: 8px !important;
+            border-radius: 999px !important;
+            transform: translateY(-50%) !important;
+            background: radial-gradient(circle, #fff7bf 0 18%, #ffd400 48%, #b48934 76%, rgba(180,137,52,.14) 100%) !important;
+            box-shadow: 0 0 7px rgba(255,212,0,.85), 0 0 14px rgba(180,137,52,.38) !important;
+        }
+
+        .pm-logo-left .atom-ring-one {
+            --atom-tilt: rotate(0deg) scaleY(.42);
+            animation-duration: 4.7s !important;
+        }
+
+        .pm-logo-left .atom-ring-two {
+            --atom-tilt: rotate(60deg) scaleY(.42);
+            animation-duration: 5.4s !important;
+            animation-direction: reverse !important;
+            border-color: rgba(180,137,52,.34) !important;
+        }
+
+        .pm-logo-left .atom-ring-three {
+            --atom-tilt: rotate(-60deg) scaleY(.42);
+            animation-duration: 6.1s !important;
+            border-color: rgba(16,104,167,.25) !important;
+        }
+
+        @keyframes pmAtomOrbit {
+            from { transform: var(--atom-tilt) rotate(0deg); }
+            to { transform: var(--atom-tilt) rotate(360deg); }
+        }
+
+        .role-select-wrap.pm-role-shell {
+            display: block !important;
+            width: 100% !important;
+            padding: 12px !important;
+            overflow: visible !important;
+        }
+
+        .pm-role-copy {
+            width: 100% !important;
+            margin: 0 0 10px !important;
+        }
+
+        .pm-role-grid,
+        header.pm-header-v5 .pm-role-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+            width: 100% !important;
+            gap: 10px !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            grid-template-columns: none !important;
+        }
+
+        .pm-role-card,
+        header.pm-header-v5 .pm-role-card {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            min-height: 58px !important;
+            display: grid !important;
+            grid-template-columns: 42px minmax(0, 1fr) !important;
+            align-items: center !important;
+            gap: 10px !important;
+            padding: 12px !important;
+            text-align: left !important;
+            white-space: normal !important;
+        }
+
+        .pm-role-card > span:last-child {
+            display: grid !important;
+            gap: 2px !important;
+            min-width: 0 !important;
+        }
+
+        .pm-role-card[data-role-card="patient"],
+        .pm-role-card[data-role-card="patient"].is-active,
+        .pm-role-card[data-role-card="patient"][aria-pressed="true"] {
+            border-color: rgba(9,42,82,.82) !important;
+            box-shadow: inset 4px 0 0 var(--pm-navy-2), 0 8px 20px rgba(9,42,82,.10) !important;
+        }
+
+        @media (max-width: 640px) {
+            html,
+            body {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 8px 6px 24px !important;
+                box-sizing: border-box !important;
+            }
+
+            header.pm-header-v5,
+            .pm-title-row,
+            .pm-command-row,
+            .role-select-wrap.pm-role-shell,
+            #userPanel,
+            #userPanel .calendar-section,
+            .calendar-section,
+            .calendar-container,
+            .calendar-header,
+            .calendar-grid {
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .pm-title-row {
+                grid-template-columns: 76px minmax(0, 1fr) !important;
+                gap: 10px !important;
+                padding: 10px !important;
+                min-height: 88px !important;
+            }
+
+            .pm-header-logo,
+            .pm-logo-left {
+                width: 76px !important;
+                height: 76px !important;
+                min-width: 76px !important;
+                min-height: 76px !important;
+                max-width: 76px !important;
+                max-height: 76px !important;
+            }
+
+            .pm-logo-left .atom-logo-orbit,
+            header.pm-header-v5 .pm-logo-left .atom-logo-orbit {
+                --atom-size: 70px;
+                --atom-logo-size: 53px;
+                --logo-orbit-radius: 31px !important;
+            }
+
+            .pm-logo-left .atom-ring {
+                inset: 7px !important;
+            }
+
+            .pm-system-label {
+                max-width: 100% !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                font-size: clamp(9px, 2.6vw, 12px) !important;
+                padding: 4px 8px !important;
+            }
+
+            .pm-command-row {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+                gap: 10px !important;
+            }
+
+            .role-select-wrap.pm-role-shell {
+                padding: 12px !important;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .pm-logo-left .atom-ring,
+            .pm-logo-left .atom-logo-orbit::before,
+            .pm-logo-left .atom-logo-orbit::after,
+            .pm-logo-left .atom-logo-orbit .logo-stack img.logo {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
     </style>
 
 </head>
@@ -2057,7 +2391,10 @@
         <header class="pm-header-v5">
             <div class="pm-title-row" aria-label="Identificação institucional">
                 <div class="pm-header-logo pm-logo-left" aria-label="Logo COPOM">
-                    <span class="logo-fiber-orbit" aria-hidden="false" id="logoFiberOrbit">
+                    <span class="logo-fiber-orbit atom-logo-orbit" aria-hidden="false" id="logoFiberOrbit">
+                        <span class="atom-ring atom-ring-one" aria-hidden="true"></span>
+                        <span class="atom-ring atom-ring-two" aria-hidden="true"></span>
+                        <span class="atom-ring atom-ring-three" aria-hidden="true"></span>
                         <span class="logo-stack" id="logoSwapContainer" data-logo-state="primary">
                             <img src="COPOM-NOVO (1).png" alt="Logo COPOM" class="logo logo-primary">
                             <img src="FMU-logo-alt.png" alt="Logo FMU Centro Universitário" class="logo logo-secondary">
@@ -2853,6 +3190,9 @@
                 const colorInput = document.getElementById('neonBorderColorInput');
                 const roleSelect = document.getElementById('roleSelect');
                 const roleCards = Array.from(document.querySelectorAll('[data-role-card]'));
+
+                // Padrão solicitado: abrir sempre com Paciente selecionado.
+                if (roleSelect) { roleSelect.value = 'patient'; }
 
                 const applyTheme = (mode) => {
                     const dark = mode === 'dark';
