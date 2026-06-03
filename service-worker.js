@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fmu-cache-v20260602-responsivo-listview-logos10s';
+const CACHE_NAME = 'fmu-cache-v20260603-fullwidth-fix-v2';
 const APP_SHELL = [
     './',
     './index.html',
