@@ -1454,6 +1454,285 @@
             }
         }
 
+
+        /* ==========================================================
+           CORRECAO FINAL - RESPONSIVO CELULAR / LISTVIEW / LOGOS
+           ========================================================== */
+        header.pm-header-v5 .logo-secondary,
+        .pm-header-logo .logo-secondary,
+        .logo-stack .logo-secondary {
+            display: block !important;
+        }
+
+        .pm-title-row {
+            width: 100% !important;
+            max-width: 100% !important;
+            grid-template-columns: 76px minmax(0, 1fr) !important;
+            justify-content: stretch !important;
+        }
+
+        .pm-logo-right {
+            display: none !important;
+        }
+
+        .pm-logo-left,
+        .pm-logo-left .logo-fiber-orbit,
+        .pm-logo-left .logo-stack {
+            width: 76px !important;
+            height: 76px !important;
+            min-width: 76px !important;
+            min-height: 76px !important;
+            max-width: 76px !important;
+            max-height: 76px !important;
+        }
+
+        .pm-logo-left .logo-stack {
+            position: relative !important;
+            display: block !important;
+            overflow: hidden !important;
+        }
+
+        .pm-logo-left .logo-stack img.logo,
+        .pm-logo-left .logo-stack .logo-primary,
+        .pm-logo-left .logo-stack .logo-secondary {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            min-width: 0 !important;
+            min-height: 0 !important;
+            padding: 7px !important;
+            object-fit: contain !important;
+            object-position: center !important;
+            border: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transition: opacity .9s ease, transform .9s ease !important;
+        }
+
+        .pm-logo-left .logo-stack .logo-primary {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            z-index: 2 !important;
+        }
+
+        .pm-logo-left .logo-stack .logo-secondary {
+            opacity: 0 !important;
+            transform: scale(.92) !important;
+            z-index: 1 !important;
+        }
+
+        .pm-logo-left .logo-fiber-orbit.show-alt .logo-primary {
+            opacity: 0 !important;
+            transform: scale(.92) !important;
+            z-index: 1 !important;
+        }
+
+        .pm-logo-left .logo-fiber-orbit.show-alt .logo-secondary {
+            opacity: 1 !important;
+            transform: scale(1) !important;
+            z-index: 2 !important;
+        }
+
+        .pm-command-row,
+        .role-select-wrap.pm-role-shell,
+        .pm-quick-tools,
+        .panel,
+        .panel.active,
+        #userPanel,
+        #userPanel .calendar-section {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .pm-command-row {
+            grid-template-columns: 1fr !important;
+            align-items: stretch !important;
+        }
+
+        .role-select-wrap.pm-role-shell {
+            grid-template-columns: 1fr !important;
+            align-items: stretch !important;
+            overflow: visible !important;
+        }
+
+        .pm-role-grid {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+        }
+
+        .pm-role-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            min-height: 54px !important;
+            display: grid !important;
+            grid-template-columns: 38px minmax(0, 1fr) !important;
+            justify-content: start !important;
+        }
+
+        #userPanel.panel,
+        #userPanel.panel.active {
+            display: block !important;
+            justify-content: initial !important;
+        }
+
+        #userPanel .calendar-section {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        @media (max-width: 720px) {
+            html,
+            body {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow-x: hidden !important;
+            }
+
+            .container {
+                width: 100% !important;
+                max-width: 100vw !important;
+                margin: 0 auto !important;
+                padding: 8px !important;
+            }
+
+            header.pm-header-v5,
+            .pm-title-row,
+            .pm-command-row,
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell,
+            .panel,
+            .panel.active,
+            #userPanel,
+            #adminPanel,
+            #myConsultationsPanel,
+            #specialistPanel,
+            #userPanel .calendar-section,
+            .calendar-section {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+
+            .pm-title-row {
+                grid-template-columns: 60px minmax(0, 1fr) !important;
+                gap: 8px !important;
+                padding: 8px !important;
+                min-height: 74px !important;
+            }
+
+            .pm-logo-left,
+            .pm-logo-left .logo-fiber-orbit,
+            .pm-logo-left .logo-stack {
+                width: 58px !important;
+                height: 58px !important;
+                min-width: 58px !important;
+                min-height: 58px !important;
+                max-width: 58px !important;
+                max-height: 58px !important;
+            }
+
+            .pm-header-copy {
+                min-width: 0 !important;
+                overflow: hidden !important;
+            }
+
+            .pm-system-label {
+                max-width: 100% !important;
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+            }
+
+            .pm-command-row {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .pm-quick-tools {
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            }
+
+            .role-select-wrap.pm-role-shell {
+                grid-template-columns: 1fr !important;
+                padding: 10px !important;
+            }
+
+            .pm-role-copy {
+                width: 100% !important;
+            }
+
+            .pm-role-grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .pm-role-card {
+                grid-template-columns: 38px minmax(0, 1fr) !important;
+                padding: 11px 12px !important;
+            }
+
+            .calendar-section {
+                border-radius: 16px !important;
+                overflow: hidden !important;
+            }
+
+            .calendar-header {
+                width: 100% !important;
+            }
+
+            #calendar.calendar-grid,
+            #blockedCalendar.calendar-grid,
+            #customizeCalendar.calendar-grid {
+                width: 100% !important;
+                max-width: 100% !important;
+                grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+                padding-left: 8px !important;
+                padding-right: 8px !important;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .container {
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+            }
+
+            .pm-title-row {
+                grid-template-columns: 56px minmax(0, 1fr) !important;
+                gap: 6px !important;
+                padding-left: 6px !important;
+                padding-right: 6px !important;
+            }
+
+            .pm-logo-left,
+            .pm-logo-left .logo-fiber-orbit,
+            .pm-logo-left .logo-stack {
+                width: 52px !important;
+                height: 52px !important;
+                min-width: 52px !important;
+                min-height: 52px !important;
+                max-width: 52px !important;
+                max-height: 52px !important;
+            }
+
+            .pm-quick-tools,
+            .role-select-wrap.pm-role-shell,
+            .calendar-section {
+                border-left-width: 1px !important;
+                border-right-width: 1px !important;
+                border-radius: 14px !important;
+            }
+        }
+
     </style>
 
 </head>

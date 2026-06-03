@@ -129,7 +129,7 @@ function initializeAlternatingLogo() {
         if (stack) {
             stack.setAttribute('data-logo-state', showAlternateLogo ? 'alternate' : 'primary');
         }
-    }, 30000);
+    }, 10000);
 }
 
 function initializeNeonCalendarControl() {
